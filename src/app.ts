@@ -1,5 +1,6 @@
 import express from "express";
 import connectMongoDB from "./database/mongoDb";
+import teacherRoutes from "./routes/teacherRoutes";
 import { config } from "dotenv";
 
 config();
@@ -7,8 +8,13 @@ config();
 const app = express();
 const port = process.env.PORT;
 
+//middleware
+app.use(express.json());
+
+//conexão banco
 connectMongoDB();
 
-app.get("/", (req, res) => res.send("hello world"));
+//rotas
+app.use("/teacher", teacherRoutes);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
