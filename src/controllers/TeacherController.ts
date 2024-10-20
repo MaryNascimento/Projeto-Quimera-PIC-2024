@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import { ITeacher } from "../interfaces/models/ITeacher";
 import { ITeacherService } from "../interfaces/service/ITeacherService";
+import { inject, injectable } from "tsyringe";
 
+@injectable()
 export class TeacherController {
-  constructor(private teacherService: ITeacherService) {}
+  constructor(
+    @inject("TeacherService") private teacherService: ITeacherService
+  ) {}
 
   async createTeacher(req: Request, res: Response) {
     try {
