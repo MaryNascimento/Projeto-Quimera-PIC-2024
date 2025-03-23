@@ -6,6 +6,7 @@ import teacherRoutes from "./routes/teacherRoutes";
 import authRoutes from "./routes/authRoutes";
 import waterExperimentRoutes from "./routes/waterExperimentRoutes";
 import waterOptionRoutes from "./routes/waterOptionRoutes";
+import waterResponseRoutes from "./routes/waterResponseRoutes";
 import { config } from "dotenv";
 
 config();
@@ -24,6 +25,7 @@ app.use("/teacher", teacherRoutes);
 app.use("/auth", authRoutes);
 app.use("/water-experiment", waterExperimentRoutes);
 app.use("/water-option", waterOptionRoutes);
+app.use("/water-response", waterResponseRoutes);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 

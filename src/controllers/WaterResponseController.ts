@@ -1,0 +1,100 @@
+import { inject, injectable } from "tsyringe";
+import { IWaterResponseService } from "../interfaces/service/IWaterResponseService";
+import { Request, Response } from "express";
+import { IWaterResponse } from "../interfaces/models/IWaterResponse";
+
+@injectable()
+export class WaterResponseController {
+  constructor(
+    @inject("WaterResponseService")
+    private waterResponseService: IWaterResponseService
+  ) {}
+
+  async createWaterResponse(req: Request, res: Response) {
+    try {
+      const { studentName, pin, answerOne, answerTwo } = req.body;
+
+      const waterResponse: IWaterResponse = {
+        studentName,
+        pin,
+        answerOne,
+        answerTwo,
+        score: answerOne.weigth + answerTwo.weigth,
+      };
+
+      const newWaterResponse =
+        await this.waterResponseService.createWaterResponse(waterResponse);
+      res.status(201).json(newWaterResponse);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Create water response error" });
+    }
+  }
+
+  async getWaterResponseByPin(req: Request, res: Response) {
+    try {
+      const { pin } = req.params;
+      const waterResponse =
+        await this.waterResponseService.getWaterResponseByPin(pin);
+
+      if (!waterResponse) {
+        res.status(404).json({ message: "Water Response not Found" });
+        return;
+      }
+
+      res.status(200).json(waterResponse);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Get water response error" });
+    }
+  }
+
+  async updateWaterResponse(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { studentName, answerOne, answerTwo } = req.body;
+
+      const waterResponse =
+        await this.waterResponseService.getWaterResponseById(id);
+
+      if (!waterResponse) {
+        res.status(404).json({ message: "Water Response not Found" });
+        return;
+      }
+
+      const updatedData = {
+        studentName: studentName || waterResponse.studentName,
+        pin: waterResponse.pin,
+        answerOne: answerOne || waterResponse.answerOne,
+        answerTwo: answerTwo || waterResponse.answerTwo,
+        score: answerOne.weigth + answerTwo.weigth || waterResponse.score,
+      };
+
+      const updatedWaterResponse =
+        await this.waterResponseService.updateWaterResponse(id, updatedData);
+      res.status(200).json(updatedWaterResponse);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Update water response error" });
+    }
+  }
+
+  async deleteWaterResponse(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const waterResponse =
+        await this.waterResponseService.getWaterResponseById(id);
+
+      if (!waterResponse) {
+        res.status(404).json({ message: "Water Response not Found" });
+        return;
+      }
+
+      await this.waterResponseService.deleteWaterResponse(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Delete water response error" });
+    }
+  }
+}
