@@ -10,7 +10,7 @@ export class AuthController {
     try {
       const { email, password } = req.body;
       const token = await this.authService.login(email, password);
-      res.status(200).json({ token });
+      res.status(200).json(token);
     } catch (error) {
       let message = "Erro desconhecido";
       if (error instanceof Error) {

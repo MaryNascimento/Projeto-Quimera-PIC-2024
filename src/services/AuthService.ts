@@ -30,6 +30,9 @@ export class AuthService implements IAuthService {
       expiresIn: "1d",
     });
 
-    return token;
+    return {
+      teacher,
+      token,
+    };
   }
 }
