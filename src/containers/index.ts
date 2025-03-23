@@ -7,14 +7,21 @@ import { WaterExperimentRepository } from "../repositories/WaterExperimentReposi
 import { WaterExperimentService } from "../services/WaterExperimentService";
 import { WaterOptionRepository } from "../repositories/WaterOptionRepository";
 import { WaterOptionService } from "../services/WaterOptionService";
+import { WaterResponseRepository } from "../repositories/WaterResponseRepository";
+import { WaterResponseService } from "../services/WaterResponseService";
 
 container.registerSingleton("AuthService", AuthService);
 container.registerSingleton("TeacherRepository", TeacherRepository);
 container.registerSingleton("TeacherService", TeacherService);
+
 container.registerSingleton(
   "WaterExperimentRepository",
   WaterExperimentRepository
 );
 container.registerSingleton("WaterExperimentService", WaterExperimentService);
-container.register("WaterOptionRepository", WaterOptionRepository);
-container.register("WaterOptionService", WaterOptionService);
+
+container.registerSingleton("WaterOptionRepository", WaterOptionRepository);
+container.registerSingleton("WaterOptionService", WaterOptionService);
+
+container.registerSingleton("WaterResponseRepository", WaterResponseRepository);
+container.registerSingleton("WaterResponseService", WaterResponseService);
