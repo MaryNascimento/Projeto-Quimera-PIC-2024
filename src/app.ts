@@ -2,12 +2,13 @@ import "reflect-metadata";
 import "./containers";
 import express from "express";
 import connectMongoDB from "./database/mongoDb";
-import teacherRoutes from "./routes/teacherRoutes";
-import authRoutes from "./routes/authRoutes";
+
+import authRoutes from "./modules/auth/auth.routes";
 import waterExperimentRoutes from "./routes/waterExperimentRoutes";
 import waterOptionRoutes from "./routes/waterOptionRoutes";
 import waterResponseRoutes from "./routes/waterResponseRoutes";
 import { config } from "dotenv";
+import { TeacherRoutes } from "./modules/teacher/teacher.routes";
 
 config();
 
@@ -21,8 +22,9 @@ app.use(express.json());
 connectMongoDB();
 
 //rotas
-app.use("/teacher", teacherRoutes);
+app.use("/teacher", TeacherRoutes);
 app.use("/auth", authRoutes);
+
 app.use("/water-experiment", waterExperimentRoutes);
 app.use("/water-option", waterOptionRoutes);
 app.use("/water-response", waterResponseRoutes);

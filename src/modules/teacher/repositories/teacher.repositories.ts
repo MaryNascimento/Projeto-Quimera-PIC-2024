@@ -1,11 +1,11 @@
 import { injectable } from "tsyringe";
-import { ITeacher } from "../interfaces/models/ITeacher";
-import { ITeacherRepository } from "../interfaces/repositories/ITeacherRepository";
-import { Teacher } from "../models/Teacher";
+import { TeacherRepositoryTypes } from "../types/teacher.repositories.types";
+import { TeacherTypes } from "../types/teacher.models.types";
+import { Teacher } from "../schemas/teacher.schemas";
 
 @injectable()
-export class TeacherRepository implements ITeacherRepository {
-  async create(teacher: ITeacher) {
+export class TeacherRepository implements TeacherRepositoryTypes {
+  async create(teacher: TeacherTypes) {
     const newTeacher = new Teacher(teacher);
     return await newTeacher.save();
   }
@@ -18,7 +18,7 @@ export class TeacherRepository implements ITeacherRepository {
   async findAll() {
     return await Teacher.find();
   }
-  async update(id: string, teacher: ITeacher) {
+  async update(id: string, teacher: TeacherTypes) {
     return await Teacher.findByIdAndUpdate(id, teacher, { new: true });
   }
   async delete(id: string) {

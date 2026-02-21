@@ -1,21 +1,24 @@
 import { inject, injectable } from "tsyringe";
-import { IAuthService } from "../interfaces/service/IAuthService";
-import { ITeacherRepository } from "../interfaces/repositories/ITeacherRepository";
+
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
-import { ITeacher } from "../interfaces/models/ITeacher";
+
 import { Document } from "mongoose";
+import { AuthServiceTypes } from "../types/auth.services.types";
+import { TeacherRepositoryTypes } from "../../teacher/types/teacher.repositories.types";
+import { TeacherTypes } from "../../teacher/types/teacher.models.types";
 
 @injectable()
-export class AuthService implements IAuthService {
+export class AuthService implements AuthServiceTypes {
   constructor(
-    @inject("TeacherRepository") private teacherRepository: ITeacherRepository
+    @inject("TeacherRepository")
+    private teacherRepository: TeacherRepositoryTypes,
   ) {}
 
   async login(email: string, password: string) {
     const teacher = (await this.teacherRepository.findByEmail(
-      email
-    )) as ITeacher & Document;
+      email,
+    )) as TeacherTypes & Document;
 
     if (!teacher) {
       throw new Error("Email ou senha incorretos");

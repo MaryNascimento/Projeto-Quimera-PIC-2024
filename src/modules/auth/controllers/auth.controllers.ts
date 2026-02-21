@@ -1,10 +1,11 @@
 import { inject, injectable } from "tsyringe";
-import { IAuthService } from "../interfaces/service/IAuthService";
+
 import { Request, Response } from "express";
+import { AuthServiceTypes } from "../types/auth.services.types";
 
 @injectable()
 export class AuthController {
-  constructor(@inject("AuthService") private authService: IAuthService) {}
+  constructor(@inject("AuthService") private authService: AuthServiceTypes) {}
 
   async login(req: Request, res: Response): Promise<void> {
     try {

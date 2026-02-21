@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
-import { ITeacher } from "../interfaces/models/ITeacher";
-import { ITeacherService } from "../interfaces/service/ITeacherService";
+
 import { inject, injectable } from "tsyringe";
+import { TeacherServiceTypes } from "../types/teacher.services.types";
+import { TeacherTypes } from "../types/teacher.models.types";
 
 @injectable()
 export class TeacherController {
   constructor(
-    @inject("TeacherService") private teacherService: ITeacherService
+    @inject("TeacherService") private teacherService: TeacherServiceTypes,
   ) {}
 
   async createTeacher(req: Request, res: Response) {
     try {
-      const teacher: ITeacher = req.body;
+      const teacher: TeacherTypes = req.body;
       const newTeacher = await this.teacherService.createTeacher(teacher);
       res.status(201).json(newTeacher);
     } catch (error) {
@@ -50,10 +51,10 @@ export class TeacherController {
   async updateTeacher(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const teacher: ITeacher = req.body;
+      const teacher: TeacherTypes = req.body;
       const updateTeacher = await this.teacherService.updateTeacher(
         id,
-        teacher
+        teacher,
       );
 
       if (!updateTeacher) {

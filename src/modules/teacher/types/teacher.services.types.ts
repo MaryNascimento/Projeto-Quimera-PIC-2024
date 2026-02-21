@@ -1,0 +1,12 @@
+import { TeacherTypes } from "./teacher.models.types";
+
+export interface TeacherServiceTypes {
+  createTeacher(teacher: TeacherTypes): Promise<TeacherTypes>;
+  getTeacherById(id: string): Promise<TeacherTypes | null>;
+  getAllTeacher(): Promise<TeacherTypes[]>;
+  updateTeacher(
+    id: string,
+    teacher: TeacherTypes,
+  ): Promise<TeacherTypes | null>;
+  deleteTeacher(id: string): Promise<void>;
+}
