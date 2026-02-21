@@ -8,6 +8,9 @@ import { WaterOptionService } from "../services/WaterOptionService";
 import { WaterResponseRepository } from "../repositories/WaterResponseRepository";
 import { WaterResponseService } from "../services/WaterResponseService";
 
+import "../modules/teacher/teacher.container";
+import "../modules/auth/auth.container";
+
 container.registerSingleton(
   "WaterExperimentRepository",
   WaterExperimentRepository,
