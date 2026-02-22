@@ -17,7 +17,7 @@ export class TeacherController {
       res.status(201).json(newTeacher);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Create user error" });
+      res.status(500).json({ message: error });
     }
   }
 

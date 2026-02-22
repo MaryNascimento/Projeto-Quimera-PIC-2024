@@ -3,7 +3,7 @@ import "./containers";
 import express from "express";
 import connectMongoDB from "./database/mongoDb";
 
-import authRoutes from "./modules/auth/auth.routes";
+import { AuthRoutes } from "./modules/auth/auth.routes";
 import waterExperimentRoutes from "./routes/waterExperimentRoutes";
 import waterOptionRoutes from "./routes/waterOptionRoutes";
 import waterResponseRoutes from "./routes/waterResponseRoutes";
@@ -22,8 +22,8 @@ app.use(express.json());
 connectMongoDB();
 
 //rotas
-app.use("/teacher", TeacherRoutes);
-app.use("/auth", authRoutes);
+app.use("/teacher", TeacherRoutes());
+app.use("/auth", AuthRoutes());
 
 app.use("/water-experiment", waterExperimentRoutes);
 app.use("/water-option", waterOptionRoutes);
