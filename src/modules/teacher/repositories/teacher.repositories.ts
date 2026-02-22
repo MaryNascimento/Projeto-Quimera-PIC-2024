@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { TeacherRepositoryTypes } from "../types/teacher.repositories.types";
-import { TeacherTypes } from "../types/teacher.models.types";
+import { TeacherTypes } from "../types/teacher.schemas.types";
 import { Teacher } from "../schemas/teacher.schemas";
 
 @injectable()

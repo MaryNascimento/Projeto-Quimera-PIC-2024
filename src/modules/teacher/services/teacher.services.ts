@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { TeacherServiceTypes } from "../types/teacher.services.types";
 import { TeacherRepositoryTypes } from "../types/teacher.repositories.types";
-import { TeacherTypes } from "../types/teacher.models.types";
+import { TeacherTypes } from "../types/teacher.schemas.types";
 
 @injectable()
 export class TeacherService implements TeacherServiceTypes {

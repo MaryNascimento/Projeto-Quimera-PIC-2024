@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import { inject, injectable } from "tsyringe";
 import { TeacherServiceTypes } from "../types/teacher.services.types";
-import { TeacherTypes } from "../types/teacher.models.types";
+import { TeacherTypes } from "../types/teacher.schemas.types";
 
 @injectable()
 export class TeacherController {

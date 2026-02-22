@@ -1,4 +1,4 @@
-import { TeacherTypes } from "./teacher.models.types";
+import { TeacherTypes } from "./teacher.schemas.types";
 
 export interface TeacherServiceTypes {
   createTeacher(teacher: TeacherTypes): Promise<TeacherTypes>;

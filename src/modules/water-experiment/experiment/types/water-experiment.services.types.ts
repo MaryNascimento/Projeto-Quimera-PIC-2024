@@ -1,0 +1,17 @@
+import { WaterExperimentTypes } from "./water-experiment.schemas.types";
+
+export interface WaterExperimentServiceTypes {
+  createWaterExperiment(
+    waterExperiment: WaterExperimentTypes,
+  ): Promise<WaterExperimentTypes>;
+  getWaterExperimentById(id: string): Promise<WaterExperimentTypes | null>;
+  getWaterExperimentByPin(pin: string): Promise<WaterExperimentTypes | null>;
+  getWaterExperimentByTeacher(
+    teacherId: string,
+  ): Promise<WaterExperimentTypes[]>;
+  updateWaterExperiment(
+    id: string,
+    waterExperiment: WaterExperimentTypes,
+  ): Promise<WaterExperimentTypes | null>;
+  deleteWaterExperiment(id: string): Promise<void>;
+}

@@ -6,7 +6,7 @@ import { sign } from "jsonwebtoken";
 import { Document } from "mongoose";
 import { AuthServiceTypes } from "../types/auth.services.types";
 import { TeacherRepositoryTypes } from "../../teacher/types/teacher.repositories.types";
-import { TeacherTypes } from "../../teacher/types/teacher.models.types";
+import { TeacherTypes } from "../../teacher/types/teacher.schemas.types";
 
 @injectable()
 export class AuthService implements AuthServiceTypes {

@@ -1,4 +1,4 @@
-import { TeacherTypes } from "../../teacher/types/teacher.models.types";
+import { TeacherTypes } from "../../teacher/types/teacher.schemas.types";
 
 export interface AuthServiceTypes {
   login(

@@ -1,7 +1,7 @@
 import { Document, model, Schema } from "mongoose";
 
 import bcrypt from "bcryptjs";
-import { TeacherTypes } from "../types/teacher.models.types";
+import { TeacherTypes } from "../types/teacher.schemas.types";
 
 const TeacherSchema = new Schema<TeacherTypes>({
   name: { type: String, required: true },
