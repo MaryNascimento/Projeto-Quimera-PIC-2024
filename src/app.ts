@@ -32,4 +32,6 @@ app.use("/water-response", WaterResponseRoutes());
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
+console.log("Testando windsurf");
+
 //questão (situação problema), gráfico, tabelas, imagens, dados, comando da questão, 5 itens(multipla escolha), gerar histograma
