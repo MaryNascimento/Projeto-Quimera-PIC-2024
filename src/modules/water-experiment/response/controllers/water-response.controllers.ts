@@ -14,12 +14,21 @@ export class WaterResponseController {
     try {
       const { studentName, pin, answerOne, answerTwo } = req.body;
 
+      // compute score safely: request may send full option objects or just ObjectId strings
+      const getWeight = (ans: any) => {
+        if (!ans) return 0;
+        if (typeof ans === "object" && "weigth" in ans) return Number(ans.weigth) || 0;
+        return 0; // if ans is id, weight must be resolved elsewhere or provided by client
+      };
+
+      const score = getWeight(answerOne) + getWeight(answerTwo);
+
       const waterResponse: WaterResponseTypes = {
         studentName,
         pin,
         answerOne,
         answerTwo,
-        score: answerOne.weigth + answerTwo.weigth,
+        score,
       };
 
       const newWaterResponse =
@@ -62,12 +71,20 @@ export class WaterResponseController {
         return;
       }
 
+      const getWeight = (ans: any) => {
+        if (!ans) return 0;
+        if (typeof ans === "object" && "weigth" in ans) return Number(ans.weigth) || 0;
+        return 0;
+      };
+
+      const score = getWeight(answerOne) + getWeight(answerTwo) || waterResponse.score;
+
       const updatedData = {
         studentName: studentName || waterResponse.studentName,
         pin: waterResponse.pin,
         answerOne: answerOne || waterResponse.answerOne,
         answerTwo: answerTwo || waterResponse.answerTwo,
-        score: answerOne.weigth + answerTwo.weigth || waterResponse.score,
+        score,
       };
 
       const updatedWaterResponse =
