@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { Request, Response } from "express";
 import { WaterResponseServiceTypes } from "../types/water-response.services.types";
 import { WaterResponseTypes } from "../types/water-response.schemas.types";
+import { asyncHandler } from "../../../../shared/asyncHandler";
 
 @injectable()
 export class WaterResponseController {
@@ -10,91 +11,57 @@ export class WaterResponseController {
     private waterResponseService: WaterResponseServiceTypes,
   ) {}
 
-  async createWaterResponse(req: Request, res: Response) {
-    try {
-      const { studentName, pin, answerOne, answerTwo } = req.body;
+  createWaterResponse = asyncHandler(async (req: Request, res: Response) => {
+    const { studentName, pin, answerOne, answerTwo } = req.body;
 
-      const waterResponse: WaterResponseTypes = {
-        studentName,
-        pin,
-        answerOne,
-        answerTwo,
-        score: answerOne.weigth + answerTwo.weigth,
-      };
+    const getWeight = (ans: any) => {
+      if (!ans) return 0;
+      if (typeof ans === "object" && "weigth" in ans) return Number(ans.weigth) || 0;
+      return 0;
+    };
 
-      const newWaterResponse =
-        await this.waterResponseService.createWaterResponse(waterResponse);
-      res.status(201).json(newWaterResponse);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Create water response error" });
-    }
-  }
+    const score = getWeight(answerOne) + getWeight(answerTwo);
 
-  async getWaterResponseByPin(req: Request, res: Response) {
-    try {
-      const { pin } = req.params;
-      const waterResponse =
-        await this.waterResponseService.getWaterResponseByPin(pin);
+    const waterResponse: WaterResponseTypes = { studentName, pin, answerOne, answerTwo, score };
+    const newWaterResponse = await this.waterResponseService.createWaterResponse(waterResponse);
+    res.status(201).json(newWaterResponse);
+  });
 
-      if (!waterResponse) {
-        res.status(404).json({ message: "Water Response not Found" });
-        return;
-      }
+  getWaterResponseByPin = asyncHandler(async (req: Request, res: Response) => {
+    const { pin } = req.params;
+    const waterResponse = await this.waterResponseService.getWaterResponseByPin(pin);
+    res.status(200).json(waterResponse);
+  });
 
-      res.status(200).json(waterResponse);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Get water response error" });
-    }
-  }
+  updateWaterResponse = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { studentName, answerOne, answerTwo } = req.body;
 
-  async updateWaterResponse(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const { studentName, answerOne, answerTwo } = req.body;
+    const waterResponse = await this.waterResponseService.getWaterResponseById(id);
 
-      const waterResponse =
-        await this.waterResponseService.getWaterResponseById(id);
+    const getWeight = (ans: any) => {
+      if (!ans) return 0;
+      if (typeof ans === "object" && "weigth" in ans) return Number(ans.weigth) || 0;
+      return 0;
+    };
 
-      if (!waterResponse) {
-        res.status(404).json({ message: "Water Response not Found" });
-        return;
-      }
+    const score = getWeight(answerOne) + getWeight(answerTwo) || (waterResponse ? waterResponse.score : 0);
 
-      const updatedData = {
-        studentName: studentName || waterResponse.studentName,
-        pin: waterResponse.pin,
-        answerOne: answerOne || waterResponse.answerOne,
-        answerTwo: answerTwo || waterResponse.answerTwo,
-        score: answerOne.weigth + answerTwo.weigth || waterResponse.score,
-      };
+    const updatedData = {
+      studentName: (studentName as string) || (waterResponse ? waterResponse.studentName : ""),
+      pin: waterResponse ? waterResponse.pin : "",
+      answerOne: answerOne || (waterResponse ? waterResponse.answerOne : null),
+      answerTwo: answerTwo || (waterResponse ? waterResponse.answerTwo : null),
+      score,
+    } as any;
 
-      const updatedWaterResponse =
-        await this.waterResponseService.updateWaterResponse(id, updatedData);
-      res.status(200).json(updatedWaterResponse);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Update water response error" });
-    }
-  }
+    const updatedWaterResponse = await this.waterResponseService.updateWaterResponse(id, updatedData);
+    res.status(200).json(updatedWaterResponse);
+  });
 
-  async deleteWaterResponse(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const waterResponse =
-        await this.waterResponseService.getWaterResponseById(id);
-
-      if (!waterResponse) {
-        res.status(404).json({ message: "Water Response not Found" });
-        return;
-      }
-
-      await this.waterResponseService.deleteWaterResponse(id);
-      res.status(204).send();
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Delete water response error" });
-    }
-  }
+  deleteWaterResponse = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    await this.waterResponseService.deleteWaterResponse(id);
+    res.status(204).send();
+  });
 }

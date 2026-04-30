@@ -5,8 +5,8 @@ import { WaterExperiment } from "../../experiment/schemas/water-experiment.schem
 const WaterResponseSchema = new Schema<WaterResponseTypes>({
   studentName: { type: String, required: true },
   pin: { type: String, required: true },
-  answerOne: { type: Schema.Types.ObjectId, ref: "WaterOption" },
-  answerTwo: { type: Schema.Types.ObjectId, ref: "WaterOption" },
+  answerOne: { type: Schema.Types.ObjectId, ref: "WaterOptions" },
+  answerTwo: { type: Schema.Types.ObjectId, ref: "WaterOptions" },
   score: { type: Number, required: true },
 });
 

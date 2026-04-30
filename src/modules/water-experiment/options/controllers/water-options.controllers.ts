@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { WaterOptionsServiceTypes } from "../types/water-options.services.types";
 import { CustomRequest } from "../../../../middlewares/authMiddleware";
 import { WaterOptionsTypes } from "../types/water-options.schemas.types";
+import { asyncHandler } from "../../../../shared/asyncHandler";
 
 @injectable()
 export class WaterOptionsController {
@@ -11,116 +12,42 @@ export class WaterOptionsController {
     private waterOptionsService: WaterOptionsServiceTypes,
   ) {}
 
-  async createWaterOption(req: CustomRequest, res: Response) {
-    try {
-      const { value, weigth, answerNumber } = req.body;
+  createWaterOption = asyncHandler(async (req: CustomRequest, res: Response) => {
+    const { value, weigth, answerNumber } = req.body;
 
-      const waterOptionData: WaterOptionsTypes = {
-        value,
-        weigth,
-        answerNumber,
-      };
+    const waterOptionData: WaterOptionsTypes = { value, weigth, answerNumber };
+    const newWaterOption = await this.waterOptionsService.createWaterOption(waterOptionData);
+    res.status(201).json(newWaterOption);
+  });
 
-      const newWaterOption =
-        await this.waterOptionsService.createWaterOption(waterOptionData);
-      res.status(201).json(newWaterOption);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Create water option error" });
-    }
-  }
+  getWaterOptionById = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const waterOption = await this.waterOptionsService.getWaterOptionById(id);
+    res.status(200).json(waterOption);
+  });
 
-  async getWaterOptionById(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const waterOption = await this.waterOptionsService.getWaterOptionById(id);
+  getWaterOptionByAnswerNumber = asyncHandler(async (req: Request, res: Response) => {
+    const { answerNumber } = req.params;
+    const waterOption = await this.waterOptionsService.getWaterOptionByAnswerNumber(Number(answerNumber));
+    res.status(200).json(waterOption);
+  });
 
-      if (!waterOption) {
-        res.status(404).json({ message: "Water option not found" });
-        return;
-      }
+  getAllWaterOption = asyncHandler(async (req: Request, res: Response) => {
+    const waterOptions = await this.waterOptionsService.getAllWaterOption();
+    res.status(200).json(waterOptions);
+  });
 
-      res.status(200).json(waterOption);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error getting water option" });
-    }
-  }
+  updateWaterOption = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { value, weigth, answerNumber } = req.body;
+    const updatedData: WaterOptionsTypes = { value, weigth, answerNumber };
+    const updatedWaterOption = await this.waterOptionsService.updateWaterOption(id, updatedData);
+    res.status(200).json(updatedWaterOption);
+  });
 
-  async getWaterOptionByAnswerNumber(req: Request, res: Response) {
-    try {
-      const { answerNumber } = req.params;
-      const waterOption =
-        await this.waterOptionsService.getWaterOptionByAnswerNumber(
-          Number(answerNumber),
-        );
-
-      if (!waterOption) {
-        res.status(404).json({ message: "Water option not found" });
-        return;
-      }
-
-      res.status(200).json(waterOption);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error getting water option" });
-    }
-  }
-
-  async getAllWaterOption(req: Request, res: Response) {
-    try {
-      const waterOptions = await this.waterOptionsService.getAllWaterOption();
-      res.status(200).json(waterOptions);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error getting water options" });
-    }
-  }
-
-  async updateWaterOption(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const { value, weigth, answerNumber } = req.body;
-
-      const existingOption =
-        await this.waterOptionsService.getWaterOptionById(id);
-
-      if (!existingOption) {
-        res.status(404).json({ message: "Water option not found" });
-        return;
-      }
-
-      const updatedData: WaterOptionsTypes = {
-        value,
-        weigth,
-        answerNumber,
-      };
-
-      const updatedWaterOption =
-        await this.waterOptionsService.updateWaterOption(id, updatedData);
-
-      res.status(200).json(updatedWaterOption);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error updating water option" });
-    }
-  }
-
-  async deleteWaterOption(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const waterOption = await this.waterOptionsService.getWaterOptionById(id);
-
-      if (!waterOption) {
-        res.status(404).json({ message: "Water option not found" });
-        return;
-      }
-
-      await this.waterOptionsService.deleteWaterOption(id);
-      res.status(200).send();
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error deleting water option" });
-    }
-  }
+  deleteWaterOption = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    await this.waterOptionsService.deleteWaterOption(id);
+    res.status(200).send();
+  });
 }
