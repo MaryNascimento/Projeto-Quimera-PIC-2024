@@ -5,6 +5,7 @@ import { CustomRequest } from "../../../../middlewares/authMiddleware";
 import { WaterExperimentServiceTypes } from "../types/water-experiment.services.types";
 import { WaterExperimentTypes } from "../types/water-experiment.schemas.types";
 import { asyncHandler } from "../../../../shared/asyncHandler";
+import ServiceError, { ServiceErrorType } from "../../../../shared/errors/ServiceError";
 
 @injectable()
 export class WaterExperimentController {
@@ -17,7 +18,7 @@ export class WaterExperimentController {
     const teacherId = req.user?.id;
     const { title, description } = req.body;
 
-    if (!teacherId) throw new Error("ID do professor não encontrado");
+    if (!teacherId) throw new ServiceError("ID do professor não encontrado", ServiceErrorType.Unauthorized);
 
     const waterExperimentData: WaterExperimentTypes = {
       pin: randomBytes(16).toString("hex").slice(0, 4),
@@ -47,7 +48,7 @@ export class WaterExperimentController {
   });
   getWaterExperimentByTeacher = asyncHandler(async (req: CustomRequest, res: Response) => {
     const teacherId = req.user?.id;
-    if (!teacherId) throw new Error("ID do professor não encontrado");
+    if (!teacherId) throw new ServiceError("ID do professor não encontrado", ServiceErrorType.Unauthorized);
     const waterExperiments = await this.waterExperimentService.getWaterExperimentByTeacher(teacherId);
     res.status(200).json(waterExperiments);
   });
@@ -57,7 +58,7 @@ export class WaterExperimentController {
 
     const existingExperiment = await this.waterExperimentService.getWaterExperimentById(id);
 
-    if (!existingExperiment) throw new Error("Experimento não encontrado");
+    if (!existingExperiment) throw new ServiceError("Experimento não encontrado", ServiceErrorType.NotFound);
 
     const updatedData = {
       pin: existingExperiment.pin,

@@ -9,16 +9,14 @@ export enum ServiceErrorType {
 export class ServiceError extends Error {
   public readonly statusCode: number;
   public readonly type: ServiceErrorType;
+  public readonly code?: string;
 
-  constructor(
-    message: string,
-    type: ServiceErrorType = ServiceErrorType.BadRequest,
-    statusCode?: number,
-  ) {
+  constructor(message: string, type: ServiceErrorType = ServiceErrorType.BadRequest, statusCode?: number, code?: string) {
     super(message);
     this.name = "ServiceError";
     this.type = type;
     this.statusCode = statusCode ?? ServiceError.mapTypeToStatus(type);
+    this.code = code;
 
     Object.setPrototypeOf(this, new.target.prototype);
   }

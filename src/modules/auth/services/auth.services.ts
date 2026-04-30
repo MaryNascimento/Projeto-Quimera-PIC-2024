@@ -7,6 +7,7 @@ import { Document } from "mongoose";
 import { AuthServiceTypes } from "../types/auth.services.types";
 import { TeacherRepositoryTypes } from "../../teacher/types/teacher.repositories.types";
 import { TeacherTypes } from "../../teacher/types/teacher.schemas.types";
+import ServiceError, { ServiceErrorType } from "../../../shared/errors/ServiceError";
 
 @injectable()
 export class AuthService implements AuthServiceTypes {
@@ -21,12 +22,12 @@ export class AuthService implements AuthServiceTypes {
     )) as TeacherTypes & Document;
 
     if (!teacher) {
-      throw new Error("E-mail ou senha incorretos");
+      throw new ServiceError("E-mail ou senha incorretos", ServiceErrorType.Unauthorized);
     }
 
     const passwordMatch = await compare(password, teacher.password);
     if (!passwordMatch) {
-      throw new Error("E-mail ou senha incorretos");
+      throw new ServiceError("E-mail ou senha incorretos", ServiceErrorType.Unauthorized);
     }
 
     const token = sign({ id: teacher._id }, process.env.JWT_SECRET as string, {

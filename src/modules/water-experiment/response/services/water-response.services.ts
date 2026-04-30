@@ -17,7 +17,7 @@ export class WaterResponseService implements WaterResponseServiceTypes {
 
   async createWaterResponse(waterResponse: WaterResponseTypes) {
     if (!waterResponse.pin) {
-      throw new ServiceError("PIN do experimento é obrigatório", ServiceErrorType.BadRequest);
+      throw new ServiceError("PIN do experimento é obrigatório", ServiceErrorType.BadRequest, undefined, "RESPONSE_PIN_REQUIRED");
     }
     const resolveWeight = async (ans: any) => {
       if (!ans) return 0;
@@ -25,8 +25,7 @@ export class WaterResponseService implements WaterResponseServiceTypes {
         return Number(ans.weigth) || 0;
       if (Types.ObjectId.isValid(ans)) {
         const doc = await WaterOptions.findById(ans).lean();
-        if (!doc)
-          throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound);
+        if (!doc) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, "OPTION_NOT_FOUND");
         return Number((doc as any).weigth) || 0;
       }
       return 0;

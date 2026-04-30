@@ -15,19 +15,19 @@ export class WaterOptionsService implements WaterOptionsServiceTypes {
 
   async createWaterOption(waterOption: WaterOptionsTypes) {
     if (!waterOption.value || waterOption.weigth === undefined || waterOption.answerNumber === undefined) {
-      throw new ServiceError("Campos obrigatórios da opção ausentes", ServiceErrorType.BadRequest);
+      throw new ServiceError("Campos obrigatórios da opção ausentes", ServiceErrorType.BadRequest, undefined, "OPTION_MISSING_FIELDS");
     }
 
     return this.waterOptionsRepository.create(waterOption);
   }
   async getWaterOptionById(id: string) {
     const option = await this.waterOptionsRepository.findById(id);
-    if (!option) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound);
+    if (!option) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, "OPTION_NOT_FOUND");
     return option;
   }
   async getWaterOptionByAnswerNumber(answerNumber: number) {
     const options = await this.waterOptionsRepository.findByAnswerNumber(answerNumber);
-    if (!options || options.length === 0) throw new ServiceError("Opções não encontradas para o número de resposta", ServiceErrorType.NotFound);
+    if (!options || options.length === 0) throw new ServiceError("Opções não encontradas para o número de resposta", ServiceErrorType.NotFound, undefined, "OPTIONS_NOT_FOUND");
     return options;
   }
   async getAllWaterOption() {
@@ -35,12 +35,12 @@ export class WaterOptionsService implements WaterOptionsServiceTypes {
   }
   async updateWaterOption(id: string, waterOption: WaterOptionsTypes) {
     const existing = await this.waterOptionsRepository.findById(id);
-    if (!existing) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound);
+    if (!existing) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, "OPTION_NOT_FOUND");
     return this.waterOptionsRepository.update(id, waterOption);
   }
   async deleteWaterOption(id: string) {
     const existing = await this.waterOptionsRepository.findById(id);
-    if (!existing) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound);
+    if (!existing) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, "OPTION_NOT_FOUND");
     return this.waterOptionsRepository.delete(id);
   }
 }

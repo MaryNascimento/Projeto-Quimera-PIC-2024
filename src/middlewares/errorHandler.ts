@@ -10,7 +10,7 @@ export function errorHandler(
   if (err instanceof ServiceError) {
     return res
       .status(err.statusCode)
-      .json({ error: err.message, type: err.type });
+      .json({ code: err.code ?? null, message: err.message, type: err.type });
   }
 
   console.error(err);
