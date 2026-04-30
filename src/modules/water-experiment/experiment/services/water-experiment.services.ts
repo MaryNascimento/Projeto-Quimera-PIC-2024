@@ -99,7 +99,6 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
         ErrorCode.EXPERIMENT_NOT_FOUND,
       );
 
-    // ownership check
     const ownerId = String((existing as any).teacher);
     if (ownerId !== requesterId) {
       throw new ServiceError(
