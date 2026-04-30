@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { WaterExperimentServiceTypes } from "../types/water-experiment.services.types";
 import { WaterExperimentTypes } from "../types/water-experiment.schemas.types";
 import { WaterExperimentRepositoryTypes } from "../types/water-experiment.repositories.types";
+import ServiceError, { ServiceErrorType } from "../../../../shared/errors/ServiceError";
 
 @injectable()
 export class WaterExperimentService implements WaterExperimentServiceTypes {
@@ -11,13 +12,27 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
   ) {}
 
   async createWaterExperiment(waterExperiment: WaterExperimentTypes) {
+    if (!waterExperiment.title || !waterExperiment.description || !waterExperiment.teacher) {
+      throw new ServiceError("Campos obrigatórios do experimento ausentes", ServiceErrorType.BadRequest);
+    }
+
+    // ensure unique PIN
+    const existingByPin = await this.waterExperimentRepository.findByPin(waterExperiment.pin);
+    if (existingByPin) {
+      throw new ServiceError("Conflito: PIN do experimento já existe", ServiceErrorType.Conflict);
+    }
+
     return this.waterExperimentRepository.create(waterExperiment);
   }
   async getWaterExperimentById(id: string) {
-    return this.waterExperimentRepository.findById(id);
+    const exp = await this.waterExperimentRepository.findById(id);
+    if (!exp) throw new ServiceError("Experimento não encontrado", ServiceErrorType.NotFound);
+    return exp;
   }
   async getWaterExperimentByPin(pin: string) {
-    return this.waterExperimentRepository.findByPin(pin);
+    const exp = await this.waterExperimentRepository.findByPin(pin);
+    if (!exp) throw new ServiceError("Experimento não encontrado", ServiceErrorType.NotFound);
+    return exp;
   }
   async getWaterExperimentByTeacher(teacherId: string) {
     return this.waterExperimentRepository.findByTeacher(teacherId);
@@ -26,9 +41,13 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
     id: string,
     waterExperiment: WaterExperimentTypes,
   ) {
+    const existing = await this.waterExperimentRepository.findById(id);
+    if (!existing) throw new ServiceError("Experimento não encontrado", ServiceErrorType.NotFound);
     return this.waterExperimentRepository.update(id, waterExperiment);
   }
   async deleteWaterExperiment(id: string) {
+    const existing = await this.waterExperimentRepository.findById(id);
+    if (!existing) throw new ServiceError("Experimento não encontrado", ServiceErrorType.NotFound);
     return this.waterExperimentRepository.delete(id);
   }
 }

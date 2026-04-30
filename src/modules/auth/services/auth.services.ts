@@ -21,12 +21,12 @@ export class AuthService implements AuthServiceTypes {
     )) as TeacherTypes & Document;
 
     if (!teacher) {
-      throw new Error("Email ou senha incorretos");
+      throw new Error("E-mail ou senha incorretos");
     }
 
     const passwordMatch = await compare(password, teacher.password);
     if (!passwordMatch) {
-      throw new Error("Email ou senha incorretos");
+      throw new Error("E-mail ou senha incorretos");
     }
 
     const token = sign({ id: teacher._id }, process.env.JWT_SECRET as string, {
