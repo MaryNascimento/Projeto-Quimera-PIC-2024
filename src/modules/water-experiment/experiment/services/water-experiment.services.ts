@@ -88,6 +88,7 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
   async updateWaterExperiment(
     id: string,
     waterExperiment: Partial<WaterExperimentTypes>,
+    requesterId: string,
   ) {
     const existing = await this.waterExperimentRepository.findById(id);
     if (!existing)
@@ -97,6 +98,16 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
         undefined,
         ErrorCode.EXPERIMENT_NOT_FOUND,
       );
+
+    const ownerId = String((existing as any).teacher);
+    if (ownerId !== requesterId) {
+      throw new ServiceError(
+        "Operação não autorizada",
+        ServiceErrorType.Forbidden,
+        undefined,
+        ErrorCode.EXPERIMENT_FORBIDDEN,
+      );
+    }
 
     const updated: WaterExperimentTypes = {
       pin: existing.pin,
@@ -111,7 +122,7 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
 
     return this.waterExperimentRepository.update(id, updated);
   }
-  async deleteWaterExperiment(id: string) {
+  async deleteWaterExperiment(id: string, requesterId: string) {
     const existing = await this.waterExperimentRepository.findById(id);
     if (!existing)
       throw new ServiceError(
@@ -120,6 +131,17 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
         undefined,
         ErrorCode.EXPERIMENT_NOT_FOUND,
       );
+
+    const ownerId = String((existing as any).teacher);
+    if (ownerId !== requesterId) {
+      throw new ServiceError(
+        "Operação não autorizada",
+        ServiceErrorType.Forbidden,
+        undefined,
+        ErrorCode.EXPERIMENT_FORBIDDEN,
+      );
+    }
+
     return this.waterExperimentRepository.delete(id);
   }
 }

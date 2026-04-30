@@ -12,6 +12,7 @@ export interface WaterExperimentServiceTypes {
   updateWaterExperiment(
     id: string,
     waterExperiment: Partial<WaterExperimentTypes>,
+    requesterId: string,
   ): Promise<WaterExperimentTypes | null>;
-  deleteWaterExperiment(id: string): Promise<void>;
+  deleteWaterExperiment(id: string, requesterId: string): Promise<void>;
 }

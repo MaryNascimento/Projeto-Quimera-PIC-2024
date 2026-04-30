@@ -8,6 +8,7 @@ import { asyncHandler } from "../../../../shared/asyncHandler";
 import ServiceError, {
   ServiceErrorType,
 } from "../../../../shared/errors/ServiceError";
+import { ErrorCode } from "../../../../shared/errors/errorCodes";
 
 @injectable()
 export class WaterExperimentController {
@@ -77,8 +78,16 @@ export class WaterExperimentController {
       res.status(200).json(waterExperiments);
     },
   );
-  updateWaterExperiment = asyncHandler(async (req: Request, res: Response) => {
+  updateWaterExperiment = asyncHandler(async (req: CustomRequest, res: Response) => {
     const { id } = req.params;
+    const requesterId = req.user?.id;
+    if (!requesterId)
+      throw new ServiceError(
+        "ID do professor não encontrado",
+        ServiceErrorType.Unauthorized,
+        undefined,
+        ErrorCode.AUTH_UNAUTHORIZED,
+      );
     const { title, description, liberateSend, liberateResult } = req.body;
 
     const existingExperiment =
@@ -108,13 +117,22 @@ export class WaterExperimentController {
     };
 
     const updatedWaterExperiment =
-      await this.waterExperimentService.updateWaterExperiment(id, updatedData);
+      await this.waterExperimentService.updateWaterExperiment(id, updatedData, requesterId);
     res.status(200).json(updatedWaterExperiment);
   });
 
-  deleteWaterExperiment = asyncHandler(async (req: Request, res: Response) => {
+  deleteWaterExperiment = asyncHandler(async (req: CustomRequest, res: Response) => {
     const { id } = req.params;
-    await this.waterExperimentService.deleteWaterExperiment(id);
+    const requesterId = req.user?.id;
+    if (!requesterId)
+      throw new ServiceError(
+        "ID do professor não encontrado",
+        ServiceErrorType.Unauthorized,
+        undefined,
+        ErrorCode.AUTH_UNAUTHORIZED,
+      );
+
+    await this.waterExperimentService.deleteWaterExperiment(id, requesterId);
     res.status(200).send();
   });
 }
