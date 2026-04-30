@@ -2,7 +2,9 @@ import { inject, injectable } from "tsyringe";
 import { TeacherServiceTypes } from "../types/teacher.services.types";
 import { TeacherRepositoryTypes } from "../types/teacher.repositories.types";
 import { TeacherTypes } from "../types/teacher.schemas.types";
-import ServiceError, { ServiceErrorType } from "../../../shared/errors/ServiceError";
+import ServiceError, {
+  ServiceErrorType,
+} from "../../../shared/errors/ServiceError";
 
 // Service layer: validate business rules and delegate to repository
 
@@ -15,20 +17,36 @@ export class TeacherService implements TeacherServiceTypes {
 
   async createTeacher(teacher: TeacherTypes) {
     if (!teacher.email || !teacher.password || !teacher.name) {
-      throw new ServiceError("Campos obrigatórios do professor ausentes", ServiceErrorType.BadRequest, undefined, "TEACHER_MISSING_FIELDS");
+      throw new ServiceError(
+        "Campos obrigatórios do professor ausentes",
+        ServiceErrorType.BadRequest,
+        undefined,
+        "TEACHER_MISSING_FIELDS",
+      );
     }
 
     // ensure unique email
     const existing = await this.teacherRepository.findByEmail(teacher.email);
     if (existing) {
-      throw new ServiceError("Conflito: já existe um professor com este e-mail", ServiceErrorType.Conflict, undefined, "TEACHER_EMAIL_CONFLICT");
+      throw new ServiceError(
+        "Conflito: email já está em uso",
+        ServiceErrorType.Conflict,
+        undefined,
+        "TEACHER_EMAIL_CONFLICT",
+      );
     }
 
     return this.teacherRepository.create(teacher);
   }
   async getTeacherById(id: string) {
     const teacher = await this.teacherRepository.findById(id);
-    if (!teacher) throw new ServiceError("Professor não encontrado", ServiceErrorType.NotFound, undefined, "TEACHER_NOT_FOUND");
+    if (!teacher)
+      throw new ServiceError(
+        "Professor não encontrado",
+        ServiceErrorType.NotFound,
+        undefined,
+        "TEACHER_NOT_FOUND",
+      );
     return teacher;
   }
   async getAllTeacher() {
@@ -36,17 +54,35 @@ export class TeacherService implements TeacherServiceTypes {
   }
   async updateTeacher(id: string, teacher: TeacherTypes) {
     const existing = await this.teacherRepository.findById(id);
-    if (!existing) throw new ServiceError("Professor não encontrado", ServiceErrorType.NotFound, undefined, "TEACHER_NOT_FOUND");
+    if (!existing)
+      throw new ServiceError(
+        "Professor não encontrado",
+        ServiceErrorType.NotFound,
+        undefined,
+        "TEACHER_NOT_FOUND",
+      );
     // prevent email collision
     if (teacher.email && teacher.email !== (existing as any).email) {
       const byEmail = await this.teacherRepository.findByEmail(teacher.email);
-      if (byEmail) throw new ServiceError("Conflito: e-mail já está em uso", ServiceErrorType.Conflict, undefined, "TEACHER_EMAIL_CONFLICT");
+      if (byEmail)
+        throw new ServiceError(
+          "Conflito: e-mail já está em uso",
+          ServiceErrorType.Conflict,
+          undefined,
+          "TEACHER_EMAIL_CONFLICT",
+        );
     }
     return this.teacherRepository.update(id, teacher);
   }
   async deleteTeacher(id: string) {
     const existing = await this.teacherRepository.findById(id);
-    if (!existing) throw new ServiceError("Professor não encontrado", ServiceErrorType.NotFound, undefined, "TEACHER_NOT_FOUND");
+    if (!existing)
+      throw new ServiceError(
+        "Professor não encontrado",
+        ServiceErrorType.NotFound,
+        undefined,
+        "TEACHER_NOT_FOUND",
+      );
     return this.teacherRepository.delete(id);
   }
 }

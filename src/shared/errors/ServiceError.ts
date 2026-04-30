@@ -3,6 +3,7 @@ export enum ServiceErrorType {
   NotFound = "NotFound",
   Conflict = "Conflict",
   Unauthorized = "Unauthorized",
+  Forbidden = "Forbidden",
   Internal = "Internal",
 }
 
@@ -27,6 +28,8 @@ export class ServiceError extends Error {
         return 400;
       case ServiceErrorType.Unauthorized:
         return 401;
+      case ServiceErrorType.Forbidden:
+        return 403;
       case ServiceErrorType.NotFound:
         return 404;
       case ServiceErrorType.Conflict:

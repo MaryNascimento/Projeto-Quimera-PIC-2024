@@ -3,6 +3,10 @@ import { inject, injectable } from "tsyringe";
 import { TeacherServiceTypes } from "../types/teacher.services.types";
 import { TeacherTypes } from "../types/teacher.schemas.types";
 import { asyncHandler } from "../../../shared/asyncHandler";
+import { CustomRequest } from "../../../middlewares/authMiddleware";
+import ServiceError, {
+  ServiceErrorType,
+} from "../../../shared/errors/ServiceError";
 
 @injectable()
 export class TeacherController {
@@ -16,8 +20,26 @@ export class TeacherController {
     res.status(201).json(newTeacher);
   });
 
-  getTeacherById = asyncHandler(async (req: Request, res: Response) => {
+  getTeacherById = asyncHandler(async (req: CustomRequest, res: Response) => {
     const { id } = req.params;
+
+    // only the teacher themself can access their data
+    const requesterId = req.user?.id;
+    if (!requesterId)
+      throw new ServiceError(
+        "Acesso não autorizado",
+        ServiceErrorType.Unauthorized,
+        undefined,
+        "AUTH_UNAUTHORIZED",
+      );
+    if (requesterId !== id)
+      throw new ServiceError(
+        "Acesso não autorizado",
+        ServiceErrorType.Forbidden,
+        undefined,
+        "TEACHER_FORBIDDEN",
+      );
+
     const teacher = await this.teacherService.getTeacherById(id);
     res.status(200).json(teacher);
   });
@@ -27,15 +49,47 @@ export class TeacherController {
     res.status(200).json(teachers);
   });
 
-  updateTeacher = asyncHandler(async (req: Request, res: Response) => {
+  updateTeacher = asyncHandler(async (req: CustomRequest, res: Response) => {
     const { id } = req.params;
+    const requesterId = req.user?.id;
+    if (!requesterId)
+      throw new ServiceError(
+        "Acesso não autorizado",
+        ServiceErrorType.Unauthorized,
+        undefined,
+        "AUTH_UNAUTHORIZED",
+      );
+    if (requesterId !== id)
+      throw new ServiceError(
+        "Acesso não autorizado",
+        ServiceErrorType.Forbidden,
+        undefined,
+        "TEACHER_FORBIDDEN",
+      );
+
     const teacher: TeacherTypes = req.body;
     const updateTeacher = await this.teacherService.updateTeacher(id, teacher);
     res.status(200).json(updateTeacher);
   });
 
-  deleteTeacher = asyncHandler(async (req: Request, res: Response) => {
+  deleteTeacher = asyncHandler(async (req: CustomRequest, res: Response) => {
     const { id } = req.params;
+    const requesterId = req.user?.id;
+    if (!requesterId)
+      throw new ServiceError(
+        "Acesso não autorizado",
+        ServiceErrorType.Unauthorized,
+        undefined,
+        "AUTH_UNAUTHORIZED",
+      );
+    if (requesterId !== id)
+      throw new ServiceError(
+        "Acesso não autorizado",
+        ServiceErrorType.Forbidden,
+        undefined,
+        "TEACHER_FORBIDDEN",
+      );
+
     await this.teacherService.deleteTeacher(id);
     res.status(204).send();
   });
