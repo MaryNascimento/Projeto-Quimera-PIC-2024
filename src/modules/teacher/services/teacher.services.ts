@@ -2,9 +2,8 @@ import { inject, injectable } from "tsyringe";
 import { TeacherServiceTypes } from "../types/teacher.services.types";
 import { TeacherRepositoryTypes } from "../types/teacher.repositories.types";
 import { TeacherTypes } from "../types/teacher.schemas.types";
-import ServiceError, {
-  ServiceErrorType,
-} from "../../../shared/errors/ServiceError";
+import ServiceError, { ServiceErrorType } from "../../../shared/errors/ServiceError";
+import { ErrorCode } from "../../../shared/errors/errorCodes";
 
 // Service layer: validate business rules and delegate to repository
 
@@ -21,7 +20,7 @@ export class TeacherService implements TeacherServiceTypes {
         "Campos obrigatórios do professor ausentes",
         ServiceErrorType.BadRequest,
         undefined,
-        "TEACHER_MISSING_FIELDS",
+        ErrorCode.TEACHER_MISSING_FIELDS,
       );
     }
 
@@ -32,7 +31,7 @@ export class TeacherService implements TeacherServiceTypes {
         "Conflito: email já está em uso",
         ServiceErrorType.Conflict,
         undefined,
-        "TEACHER_EMAIL_CONFLICT",
+        ErrorCode.TEACHER_EMAIL_CONFLICT,
       );
     }
 
@@ -45,7 +44,7 @@ export class TeacherService implements TeacherServiceTypes {
         "Professor não encontrado",
         ServiceErrorType.NotFound,
         undefined,
-        "TEACHER_NOT_FOUND",
+        ErrorCode.TEACHER_NOT_FOUND,
       );
     return teacher;
   }
@@ -59,7 +58,7 @@ export class TeacherService implements TeacherServiceTypes {
         "Professor não encontrado",
         ServiceErrorType.NotFound,
         undefined,
-        "TEACHER_NOT_FOUND",
+        ErrorCode.TEACHER_NOT_FOUND,
       );
     // prevent email collision
     if (teacher.email && teacher.email !== (existing as any).email) {
@@ -69,7 +68,7 @@ export class TeacherService implements TeacherServiceTypes {
           "Conflito: e-mail já está em uso",
           ServiceErrorType.Conflict,
           undefined,
-          "TEACHER_EMAIL_CONFLICT",
+          ErrorCode.TEACHER_EMAIL_CONFLICT,
         );
     }
     return this.teacherRepository.update(id, teacher);
@@ -81,7 +80,7 @@ export class TeacherService implements TeacherServiceTypes {
         "Professor não encontrado",
         ServiceErrorType.NotFound,
         undefined,
-        "TEACHER_NOT_FOUND",
+        ErrorCode.TEACHER_NOT_FOUND,
       );
     return this.teacherRepository.delete(id);
   }

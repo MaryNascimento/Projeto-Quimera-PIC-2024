@@ -2,9 +2,8 @@ import { inject, injectable } from "tsyringe";
 import { WaterResponseServiceTypes } from "../types/water-response.services.types";
 import { WaterResponseRepositoryTypes } from "../types/water-response.repositories.types";
 import { WaterResponseTypes } from "../types/water-response.schemas.types";
-import ServiceError, {
-  ServiceErrorType,
-} from "../../../../shared/errors/ServiceError";
+import ServiceError, { ServiceErrorType } from "../../../../shared/errors/ServiceError";
+import { ErrorCode } from "../../../../shared/errors/errorCodes";
 import { WaterOptions } from "../../options/schemas/water-options.schemas";
 import { Types } from "mongoose";
 
@@ -17,7 +16,7 @@ export class WaterResponseService implements WaterResponseServiceTypes {
 
   async createWaterResponse(waterResponse: WaterResponseTypes) {
     if (!waterResponse.pin) {
-      throw new ServiceError("PIN do experimento é obrigatório", ServiceErrorType.BadRequest, undefined, "RESPONSE_PIN_REQUIRED");
+      throw new ServiceError("PIN do experimento é obrigatório", ServiceErrorType.BadRequest, undefined, ErrorCode.RESPONSE_PIN_REQUIRED);
     }
     const resolveWeight = async (ans: any) => {
       if (!ans) return 0;
@@ -25,7 +24,7 @@ export class WaterResponseService implements WaterResponseServiceTypes {
         return Number(ans.weigth) || 0;
       if (Types.ObjectId.isValid(ans)) {
         const doc = await WaterOptions.findById(ans).lean();
-        if (!doc) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, "OPTION_NOT_FOUND");
+        if (!doc) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, ErrorCode.OPTION_NOT_FOUND);
         return Number((doc as any).weigth) || 0;
       }
       return 0;
