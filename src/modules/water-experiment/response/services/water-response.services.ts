@@ -2,6 +2,11 @@ import { inject, injectable } from "tsyringe";
 import { WaterResponseServiceTypes } from "../types/water-response.services.types";
 import { WaterResponseRepositoryTypes } from "../types/water-response.repositories.types";
 import { WaterResponseTypes } from "../types/water-response.schemas.types";
+import ServiceError, {
+  ServiceErrorType,
+} from "../../../../shared/errors/ServiceError";
+import { WaterOptions } from "../../options/schemas/water-options.schemas";
+import { Types } from "mongoose";
 
 @injectable()
 export class WaterResponseService implements WaterResponseServiceTypes {
@@ -11,7 +16,31 @@ export class WaterResponseService implements WaterResponseServiceTypes {
   ) {}
 
   async createWaterResponse(waterResponse: WaterResponseTypes) {
-    return this.waterResponseRepository.create(waterResponse);
+    if (!waterResponse.pin) {
+      throw new ServiceError("Pin is required", ServiceErrorType.BadRequest);
+    }
+    const resolveWeight = async (ans: any) => {
+      if (!ans) return 0;
+      if (typeof ans === "object" && "weigth" in ans)
+        return Number(ans.weigth) || 0;
+      if (Types.ObjectId.isValid(ans)) {
+        const doc = await WaterOptions.findById(ans).lean();
+        if (!doc)
+          throw new ServiceError(
+            "Water option not found",
+            ServiceErrorType.NotFound,
+          );
+        return Number((doc as any).weigth) || 0;
+      }
+      return 0;
+    };
+
+    const score =
+      (await resolveWeight(waterResponse.answerOne)) +
+      (await resolveWeight(waterResponse.answerTwo));
+    const toSave: WaterResponseTypes = { ...waterResponse, score };
+
+    return this.waterResponseRepository.create(toSave);
   }
   async getWaterResponseByPin(pin: string) {
     return this.waterResponseRepository.findByPin(pin);
