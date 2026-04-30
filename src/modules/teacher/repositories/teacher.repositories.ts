@@ -22,7 +22,6 @@ export class TeacherRepository implements TeacherRepositoryTypes {
     const doc = await Teacher.findById(id).select("+password");
     if (!doc) return null;
 
-    // copy provided fields onto the document so pre('save') hooks run (eg. password hashing)
     Object.keys(teacher).forEach((key) => {
       // @ts-ignore
       doc[key] = (teacher as any)[key];

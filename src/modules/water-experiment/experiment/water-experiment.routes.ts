@@ -31,7 +31,7 @@ export function WaterExperimentRoutes() {
       waterExperimentController,
     ),
   );
-  // endpoint for the authenticated teacher to list their experiments
+
   router.get(
     "/me",
     authMiddleware,

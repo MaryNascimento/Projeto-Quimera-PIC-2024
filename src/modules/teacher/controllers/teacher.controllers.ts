@@ -34,7 +34,7 @@ export class TeacherController {
       );
     if (requesterId !== id)
       throw new ServiceError(
-        "Acesso negado: recurso pertence a outro professor",
+        "Acesso não autorizado",
         ServiceErrorType.Forbidden,
         undefined,
         ErrorCode.TEACHER_FORBIDDEN,
@@ -61,7 +61,7 @@ export class TeacherController {
       );
     if (requesterId !== id)
       throw new ServiceError(
-        "Acesso negado: não é possível atualizar outro professor",
+        "Acesso não autorizado",
         ServiceErrorType.Forbidden,
         undefined,
         ErrorCode.TEACHER_FORBIDDEN,
@@ -84,7 +84,7 @@ export class TeacherController {
       );
     if (requesterId !== id)
       throw new ServiceError(
-        "Acesso negado: não é possível deletar outro professor",
+        "Acesso não autorizado",
         ServiceErrorType.Forbidden,
         undefined,
         ErrorCode.TEACHER_FORBIDDEN,

@@ -28,13 +28,11 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
       );
     }
 
-    // try to create with unique PIN, if conflict occurs attempt limited retries
     const MAX_RETRIES = 5;
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
         return await this.waterExperimentRepository.create(waterExperiment);
       } catch (err: any) {
-        // duplicate key error on pin
         if (err?.code === 11000 && err.message?.includes("pin")) {
           if (attempt === MAX_RETRIES - 1) {
             throw new ServiceError(
@@ -44,14 +42,17 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
               ErrorCode.EXPERIMENT_PIN_CONFLICT,
             );
           }
-          // generate a new pin and retry
-          waterExperiment.pin = require("crypto").randomBytes(8).toString("hex").slice(0, 6);
+
+          waterExperiment.pin = require("crypto")
+            .randomBytes(8)
+            .toString("hex")
+            .slice(0, 6);
           continue;
         }
         throw err;
       }
     }
-    // fallback
+
     throw new ServiceError(
       "Conflito: PIN do experimento não pôde ser gerado",
       ServiceErrorType.Conflict,
@@ -84,7 +85,10 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
   async getWaterExperimentByTeacher(teacherId: string) {
     return this.waterExperimentRepository.findByTeacher(teacherId);
   }
-  async updateWaterExperiment(id: string, waterExperiment: Partial<WaterExperimentTypes>) {
+  async updateWaterExperiment(
+    id: string,
+    waterExperiment: Partial<WaterExperimentTypes>,
+  ) {
     const existing = await this.waterExperimentRepository.findById(id);
     if (!existing)
       throw new ServiceError(
