@@ -2,10 +2,10 @@ import { inject, injectable } from "tsyringe";
 import { TeacherServiceTypes } from "../types/teacher.services.types";
 import { TeacherRepositoryTypes } from "../types/teacher.repositories.types";
 import { TeacherTypes } from "../types/teacher.schemas.types";
-import ServiceError, { ServiceErrorType } from "../../../shared/errors/ServiceError";
+import ServiceError, {
+  ServiceErrorType,
+} from "../../../shared/errors/ServiceError";
 import { ErrorCode } from "../../../shared/errors/errorCodes";
-
-// Service layer: validate business rules and delegate to repository
 
 @injectable()
 export class TeacherService implements TeacherServiceTypes {
@@ -24,7 +24,6 @@ export class TeacherService implements TeacherServiceTypes {
       );
     }
 
-    // ensure unique email
     const existing = await this.teacherRepository.findByEmail(teacher.email);
     if (existing) {
       throw new ServiceError(
@@ -60,7 +59,7 @@ export class TeacherService implements TeacherServiceTypes {
         undefined,
         ErrorCode.TEACHER_NOT_FOUND,
       );
-    // prevent email collision
+
     if (teacher.email && teacher.email !== (existing as any).email) {
       const byEmail = await this.teacherRepository.findByEmail(teacher.email);
       if (byEmail)
