@@ -13,9 +13,9 @@ export class WaterOptionsController {
   ) {}
 
   createWaterOption = asyncHandler(async (req: CustomRequest, res: Response) => {
-    const { value, weigth, answerNumber } = req.body;
+    const { value, weight, answerNumber } = req.body;
 
-    const waterOptionData: WaterOptionsTypes = { value, weigth, answerNumber };
+    const waterOptionData: WaterOptionsTypes = { value, weight, answerNumber };
     const newWaterOption = await this.waterOptionsService.createWaterOption(waterOptionData);
     res.status(201).json(newWaterOption);
   });
@@ -39,8 +39,8 @@ export class WaterOptionsController {
 
   updateWaterOption = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { value, weigth, answerNumber } = req.body;
-    const updatedData: WaterOptionsTypes = { value, weigth, answerNumber };
+    const { value, weight, answerNumber } = req.body;
+    const updatedData: WaterOptionsTypes = { value, weight, answerNumber };
     const updatedWaterOption = await this.waterOptionsService.updateWaterOption(id, updatedData);
     res.status(200).json(updatedWaterOption);
   });

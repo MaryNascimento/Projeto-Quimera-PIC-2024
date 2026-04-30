@@ -1,18 +1,24 @@
 import { Request, Response, NextFunction } from "express";
 import { JwtPayload, verify } from "jsonwebtoken";
+import ServiceError, { ServiceErrorType } from "../shared/errors/ServiceError";
+import { ErrorCode } from "../shared/errors/errorCodes";
 
 export type CustomRequest = Request & { user?: JwtPayload & { id: string } };
 
 export function authMiddleware(
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    res.status(401).json({ error: "Acesso negado, token não fornecido" });
-    return;
+    throw new ServiceError(
+      "Acesso negado, token não fornecido",
+      ServiceErrorType.Unauthorized,
+      undefined,
+      ErrorCode.AUTH_UNAUTHORIZED,
+    );
   }
 
   try {
@@ -20,6 +26,11 @@ export function authMiddleware(
     req.user = decoded as CustomRequest["user"];
     next();
   } catch (error) {
-    res.status(400).json({ error: "Token inválido" });
+    throw new ServiceError(
+      "Token inválido",
+      ServiceErrorType.Unauthorized,
+      undefined,
+      ErrorCode.AUTH_UNAUTHORIZED,
+    );
   }
 }

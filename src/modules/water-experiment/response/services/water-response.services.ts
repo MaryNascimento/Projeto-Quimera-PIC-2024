@@ -20,12 +20,11 @@ export class WaterResponseService implements WaterResponseServiceTypes {
     }
     const resolveWeight = async (ans: any) => {
       if (!ans) return 0;
-      if (typeof ans === "object" && "weigth" in ans)
-        return Number(ans.weigth) || 0;
+      if (typeof ans === "object" && "weight" in ans) return Number(ans.weight) || 0;
       if (Types.ObjectId.isValid(ans)) {
         const doc = await WaterOptions.findById(ans).lean();
         if (!doc) throw new ServiceError("Opção não encontrada", ServiceErrorType.NotFound, undefined, ErrorCode.OPTION_NOT_FOUND);
-        return Number((doc as any).weigth) || 0;
+        return Number((doc as any).weight) || 0;
       }
       return 0;
     };

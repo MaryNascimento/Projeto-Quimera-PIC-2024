@@ -28,19 +28,36 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
       );
     }
 
-    const existingByPin = await this.waterExperimentRepository.findByPin(
-      waterExperiment.pin,
-    );
-    if (existingByPin) {
-      throw new ServiceError(
-        "Conflito: PIN do experimento já existe",
-        ServiceErrorType.Conflict,
-        undefined,
-        ErrorCode.EXPERIMENT_PIN_CONFLICT,
-      );
+    // try to create with unique PIN, if conflict occurs attempt limited retries
+    const MAX_RETRIES = 5;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        return await this.waterExperimentRepository.create(waterExperiment);
+      } catch (err: any) {
+        // duplicate key error on pin
+        if (err?.code === 11000 && err.message?.includes("pin")) {
+          if (attempt === MAX_RETRIES - 1) {
+            throw new ServiceError(
+              "Conflito: PIN do experimento não pôde ser gerado",
+              ServiceErrorType.Conflict,
+              undefined,
+              ErrorCode.EXPERIMENT_PIN_CONFLICT,
+            );
+          }
+          // generate a new pin and retry
+          waterExperiment.pin = require("crypto").randomBytes(8).toString("hex").slice(0, 6);
+          continue;
+        }
+        throw err;
+      }
     }
-
-    return this.waterExperimentRepository.create(waterExperiment);
+    // fallback
+    throw new ServiceError(
+      "Conflito: PIN do experimento não pôde ser gerado",
+      ServiceErrorType.Conflict,
+      undefined,
+      ErrorCode.EXPERIMENT_PIN_CONFLICT,
+    );
   }
   async getWaterExperimentById(id: string) {
     const exp = await this.waterExperimentRepository.findById(id);
@@ -67,10 +84,7 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
   async getWaterExperimentByTeacher(teacherId: string) {
     return this.waterExperimentRepository.findByTeacher(teacherId);
   }
-  async updateWaterExperiment(
-    id: string,
-    waterExperiment: WaterExperimentTypes,
-  ) {
+  async updateWaterExperiment(id: string, waterExperiment: Partial<WaterExperimentTypes>) {
     const existing = await this.waterExperimentRepository.findById(id);
     if (!existing)
       throw new ServiceError(
@@ -79,7 +93,19 @@ export class WaterExperimentService implements WaterExperimentServiceTypes {
         undefined,
         ErrorCode.EXPERIMENT_NOT_FOUND,
       );
-    return this.waterExperimentRepository.update(id, waterExperiment);
+
+    const updated: WaterExperimentTypes = {
+      pin: existing.pin,
+      teacher: existing.teacher,
+      title: waterExperiment.title ?? existing.title,
+      description: waterExperiment.description ?? existing.description,
+      liberateSend: waterExperiment.liberateSend ?? existing.liberateSend,
+      liberateResult: waterExperiment.liberateResult ?? existing.liberateResult,
+      responsesNumber: existing.responsesNumber,
+      createdAt: existing.createdAt,
+    };
+
+    return this.waterExperimentRepository.update(id, updated);
   }
   async deleteWaterExperiment(id: string) {
     const existing = await this.waterExperimentRepository.findById(id);

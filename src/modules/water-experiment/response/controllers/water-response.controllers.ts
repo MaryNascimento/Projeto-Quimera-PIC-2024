@@ -16,7 +16,7 @@ export class WaterResponseController {
 
     const getWeight = (ans: any) => {
       if (!ans) return 0;
-      if (typeof ans === "object" && "weigth" in ans) return Number(ans.weigth) || 0;
+      if (typeof ans === "object" && "weight" in ans) return Number(ans.weight) || 0;
       return 0;
     };
 
@@ -41,7 +41,7 @@ export class WaterResponseController {
 
     const getWeight = (ans: any) => {
       if (!ans) return 0;
-      if (typeof ans === "object" && "weigth" in ans) return Number(ans.weigth) || 0;
+      if (typeof ans === "object" && "weight" in ans) return Number(ans.weight) || 0;
       return 0;
     };
 

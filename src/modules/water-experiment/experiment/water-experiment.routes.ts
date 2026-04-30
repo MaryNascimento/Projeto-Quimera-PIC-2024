@@ -31,8 +31,9 @@ export function WaterExperimentRoutes() {
       waterExperimentController,
     ),
   );
+  // endpoint for the authenticated teacher to list their experiments
   router.get(
-    "/teacher/:teacherId",
+    "/me",
     authMiddleware,
     waterExperimentController.getWaterExperimentByTeacher.bind(
       waterExperimentController,

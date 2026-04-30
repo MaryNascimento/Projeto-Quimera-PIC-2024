@@ -21,7 +21,8 @@ export class WaterExperimentController {
     if (!teacherId) throw new ServiceError("ID do professor não encontrado", ServiceErrorType.Unauthorized);
 
     const waterExperimentData: WaterExperimentTypes = {
-      pin: randomBytes(16).toString("hex").slice(0, 4),
+      // use slightly larger PIN space (6 hex chars) and let service handle collisions
+      pin: randomBytes(8).toString("hex").slice(0, 6),
       teacher: teacherId,
       title,
       description,
@@ -46,6 +47,7 @@ export class WaterExperimentController {
     const waterExperiment = await this.waterExperimentService.getWaterExperimentByPin(pin);
     res.status(200).json(waterExperiment);
   });
+  // Prefer explicit endpoint for current user to avoid confusion with :teacherId param
   getWaterExperimentByTeacher = asyncHandler(async (req: CustomRequest, res: Response) => {
     const teacherId = req.user?.id;
     if (!teacherId) throw new ServiceError("ID do professor não encontrado", ServiceErrorType.Unauthorized);

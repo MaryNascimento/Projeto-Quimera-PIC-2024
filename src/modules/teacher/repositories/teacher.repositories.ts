@@ -19,7 +19,16 @@ export class TeacherRepository implements TeacherRepositoryTypes {
     return await Teacher.find();
   }
   async update(id: string, teacher: TeacherTypes) {
-    return await Teacher.findByIdAndUpdate(id, teacher, { new: true });
+    const doc = await Teacher.findById(id).select("+password");
+    if (!doc) return null;
+
+    // copy provided fields onto the document so pre('save') hooks run (eg. password hashing)
+    Object.keys(teacher).forEach((key) => {
+      // @ts-ignore
+      doc[key] = (teacher as any)[key];
+    });
+
+    return await doc.save();
   }
   async delete(id: string) {
     await Teacher.findByIdAndDelete(id);
