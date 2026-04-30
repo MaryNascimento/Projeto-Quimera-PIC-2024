@@ -17,7 +17,7 @@ export class WaterOptionsService implements WaterOptionsServiceTypes {
   async createWaterOption(waterOption: WaterOptionsTypes) {
     if (
       !waterOption.value ||
-      waterOption.weigth === undefined ||
+      waterOption.weight === undefined ||
       waterOption.answerNumber === undefined
     ) {
       throw new ServiceError(

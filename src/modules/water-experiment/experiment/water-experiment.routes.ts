@@ -31,8 +31,9 @@ export function WaterExperimentRoutes() {
       waterExperimentController,
     ),
   );
+
   router.get(
-    "/teacher/:teacherId",
+    "/me",
     authMiddleware,
     waterExperimentController.getWaterExperimentByTeacher.bind(
       waterExperimentController,

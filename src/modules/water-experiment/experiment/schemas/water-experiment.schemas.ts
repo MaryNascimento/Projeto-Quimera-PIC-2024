@@ -2,7 +2,7 @@ import { model, Schema } from "mongoose";
 import { WaterExperimentTypes } from "../types/water-experiment.schemas.types";
 
 const WaterExperimentSchema = new Schema<WaterExperimentTypes>({
-  pin: { type: String, required: true },
+  pin: { type: String, required: true, index: { unique: true } },
   teacher: { type: Schema.Types.ObjectId, ref: "Teacher", required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },

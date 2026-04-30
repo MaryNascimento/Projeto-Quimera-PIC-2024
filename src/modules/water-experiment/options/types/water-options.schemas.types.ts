@@ -1,5 +1,5 @@
 export interface WaterOptionsTypes {
   value: string;
-  weigth: number;
+  weight: number;
   answerNumber: number;
 }
