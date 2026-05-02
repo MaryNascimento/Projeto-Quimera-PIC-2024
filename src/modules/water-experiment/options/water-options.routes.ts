@@ -2,7 +2,6 @@ import { Router } from "express";
 import { container } from "tsyringe";
 
 import { WaterOptionsController } from "./controllers/water-options.controllers";
-import { authMiddleware } from "../../../middlewares/authMiddleware";
 
 export function WaterOptionsRoutes() {
   const router = Router();
@@ -11,7 +10,6 @@ export function WaterOptionsRoutes() {
 
   router.post(
     "/",
-    authMiddleware,
     waterOptionsController.createWaterOption.bind(waterOptionsController),
   );
 
@@ -34,13 +32,11 @@ export function WaterOptionsRoutes() {
 
   router.put(
     "/:id",
-    authMiddleware,
     waterOptionsController.updateWaterOption.bind(waterOptionsController),
   );
 
   router.delete(
     "/:id",
-    authMiddleware,
     waterOptionsController.deleteWaterOption.bind(waterOptionsController),
   );
 

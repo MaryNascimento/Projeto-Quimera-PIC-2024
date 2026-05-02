@@ -31,11 +31,9 @@ app.use("/water-experiment", WaterExperimentRoutes());
 app.use("/water-option", WaterOptionsRoutes());
 app.use("/water-response", WaterResponseRoutes());
 
-// error handler (should be after routes)
+// error handler
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
-
-console.log("Testando windsurf");
 
 //questão (situação problema), gráfico, tabelas, imagens, dados, comando da questão, 5 itens(multipla escolha), gerar histograma
