@@ -26,7 +26,6 @@ export function WaterExperimentRoutes() {
   );
   router.get(
     "/pin/:pin",
-    authMiddleware,
     waterExperimentController.getWaterExperimentByPin.bind(
       waterExperimentController,
     ),
